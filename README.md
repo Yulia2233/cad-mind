@@ -9,14 +9,16 @@ CAD Mind 是 CAD Agent 与 STEP 逆向工程项目的导航入口。各仓库按
 | [cad-code](https://github.com/Yulia2233/cad-code) | OpenCode CAD Agent，提供 CLI、Web、建模会话、多 solid 分流与装配运行 | [使用指南](docs/cad-code.md) · [仓库 README](https://github.com/Yulia2233/cad-code/blob/main/README.md) |
 | [step-tools](https://github.com/Yulia2233/step-tools) | STEPIR v6.3 生成、按需查询、评分与多 solid STEP 拆分/去重 | [使用指南](docs/step-tools.md) · [仓库 README](https://github.com/Yulia2233/step-tools/blob/main/README.md) |
 | [cad-reverse-engineer](https://github.com/Yulia2233/cad-reverse-engineer) | SimpleCADAPI 2.2.7 Agent Skill：单件逆向技能，以及仅在装配时启用的 assembly 扩展 | [使用指南](docs/cad-reverse-engineer.md) · [仓库 README](https://github.com/Yulia2233/cad-reverse-engineer/blob/main/README.md) |
-| `step-8B-sft`（本地仓库） | SFT/Agent 实验、数据集、bench_cli 和批量轨迹队列；当前没有 GitHub remote | [使用指南](docs/step-8B-sft.md) · GitHub 仓库待创建 |
+| `bench_cli`（`step-8B-sft/bench_cli` 子项目） | 单件 oneshot/agent benchmark 与独立多 solid assembly benchmark；不是单独 Git 仓库 | [使用指南](docs/bench_cli.md) |
+| `step-8B-sft`（本地仓库） | SFT/Agent 实验、数据集、提示词和批量轨迹队列；当前没有 GitHub remote | [使用指南](docs/step-8B-sft.md) · GitHub 仓库待创建 |
 
 ## 按任务选择
 
 - 用现有模型交互、重建单件或处理多 solid 项目：从 `cad-code` 开始。
 - 查看或生成 STEPIR，验证 STEP 特征记录，拆分多 solid STEP：用 `step-tools`。
 - 安装或修改 Agent 的 SimpleCADAPI 建模规范：用 `cad-reverse-engineer`。单件继续使用原 `simplecadapi` skill；只有装配会话加载 assembly 扩展。
-- 管理训练数据、实验、评测和批量 CAD Code 任务：用 `step-8B-sft`。
+- 运行单件或装配 benchmark：用 `step-8B-sft/bench_cli`。
+- 管理训练数据、实验和批量 CAD Code 轨迹任务：用 `step-8B-sft`。
 
 ## 多 solid 流程
 
