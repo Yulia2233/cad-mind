@@ -7,7 +7,7 @@
 | 目录 | 用途 |
 |---|---|
 | `datasets/` | 分版本、分任务的数据集与打包产物 |
-| `bench_cli/` | 单件与多 solid benchmark；详见 [bench_cli 使用指南](bench_cli.md) |
+| `bench_cli/` | 本地实验副本；正式源码在 [Yulia2233/bench_cli](https://github.com/Yulia2233/bench_cli)，操作见 [bench_cli 使用指南](bench_cli.md) |
 | `stepir_geom_gen/` | 批量轨迹合成队列；历史队列按批次保留，新多 solid 队列在 `cadcode_synth_multisolid/` |
 | `stepir_geom/` | STEPIR 研究工作树；多 solid 预处理已同步到 `Yulia2233/step-tools` 的功能分支 |
 | `more_solid-data/` | 多实体开发验证 STEP 和 manifest；来源/用途依 manifest 记录 |

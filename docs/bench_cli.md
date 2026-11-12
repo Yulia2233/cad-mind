@@ -1,6 +1,6 @@
 # bench_cli 使用指南
 
-[`bench_cli`](https://github.com/Yulia2233/bench_cli) 是 STEP 重建实验的命令行 benchmark 工具，包含单件 oneshot/agent 评测和 `assembly/bench_assembly` 多 solid 评测。GitHub 仓库已创建；目前可运行的源码仍在本地 `step-8B-sft/bench_cli/`，指南中的路径和命令针对这份源码，代码迁入独立仓库后再切换为该仓库根目录。
+[`bench_cli`](https://github.com/Yulia2233/bench_cli) 是 STEP 重建实验的命令行 benchmark 工具，包含单件 oneshot/agent 评测和 `assembly/bench_assembly` 多 solid 评测。源码已发布在独立仓库 `main`；`step-8B-sft/bench_cli/` 仍保留实验工作区副本。以下命令均从独立仓库根目录运行。
 
 ## 环境与安全
 
