@@ -17,7 +17,7 @@ CAD Mind 是 CAD Agent 与 STEP 逆向工程项目的导航入口。各仓库按
 - 用现有模型交互、重建单件或处理多 solid 项目：从 `cad-code` 开始。
 - 查看或生成 STEPIR，验证 STEP 特征记录，拆分多 solid STEP：用 `step-tools`。
 - 安装或修改 Agent 的 SimpleCADAPI 建模规范：用 `cad-reverse-engineer`。单件继续使用原 `simplecadapi` skill；只有装配会话加载 assembly 扩展。
-- 运行单件或装配 benchmark：用 `step-8B-sft/bench_cli`。
+- 运行单件或装配 benchmark：用独立仓库 `bench_cli`；实验工作区也保留兼容副本。
 - 管理训练数据、实验和批量 CAD Code 轨迹任务：用 `step-8B-sft`。
 
 ## 多 solid 流程
@@ -33,6 +33,8 @@ step-tools 预处理 STEP
 
 单件 STEP 仍走 `cad-code` 原有会话和 skill；assembly 扩展只描述多文件组合。不要把不同 STEPIR 版本的面号混用，也不要把评测目标放入训练数据。
 
+大装配先由脚本生成覆盖所有 occurrence 的静态 ground + fixed spanning tree；Agent 通过有界索引和分页按需读局部证据，只对有限候选推断运动副。悬空或不确定的 occurrence 保留源位置并继续 fixed。运行与归档细节见 [CAD Code 指南](docs/cad-code.md#大装配的上下文和默认约束) 和 [benchmark 指南](docs/bench_cli.md)。
+
 ## 当前功能分支
 
 以下分支包含本轮多 solid 功能；PR 尚未创建：
@@ -41,4 +43,4 @@ step-tools 预处理 STEP
 - [step-tools `codex/multisolid-preprocessor`](https://github.com/Yulia2233/step-tools/tree/codex/multisolid-preprocessor)
 - [cad-reverse-engineer `codex/assembly-extension`](https://github.com/Yulia2233/cad-reverse-engineer/tree/codex/assembly-extension)
 
-`step-8B-sft` 的多 solid 队列和 benchmark 目前只在本地根仓库；等该仓库创建 GitHub remote 后，再更新上表和指南中的链接。
+`step-8B-sft` 的多 solid 批量队列目前只在本地根仓库；benchmark 源码已发布到独立 `bench_cli` 仓库。等 `step-8B-sft` 创建 GitHub remote 后，再更新上表和指南中的链接。

@@ -10,18 +10,18 @@ API profile 用交互输入密钥，或通过 stdin 从 secrets manager 传入�
 
 ## 单件评测
 
-从 `step-8B-sft` 根目录运行：
+从独立 `bench_cli` 仓库根目录运行（私有数据与 CAD Code 路径通过 `BENCH_DATA_DIR`、`BENCH_CAD_CODE_DIR` 配置）：
 
 ```bash
-node ./bench_cli/bench_cli.mjs profile set lab \
+node ./bench_cli.mjs profile set lab \
   --base-url https://provider.example/v1 --model model-id
-secret-manager-command | node ./bench_cli/bench_cli.mjs profile set lab \
+secret-manager-command | node ./bench_cli.mjs profile set lab \
   --base-url https://provider.example/v1 --model model-id --api-key-stdin
-node ./bench_cli/bench_cli.mjs profile test lab
-node ./bench_cli/bench_cli.mjs dataset list
-node ./bench_cli/bench_cli.mjs run oneshot \
+node ./bench_cli.mjs profile test lab
+node ./bench_cli.mjs dataset list
+node ./bench_cli.mjs run oneshot \
   --dataset oneshot270-v1 --profile lab --parallel 1
-node ./bench_cli/bench_cli.mjs run agent \
+node ./bench_cli.mjs run agent \
   --dataset agent30-cadcode-v3 --profile lab --parallel 1
 ```
 
@@ -30,40 +30,44 @@ node ./bench_cli/bench_cli.mjs run agent \
 Built-in datasets 是只读快照。修改前创建新 revision：
 
 ```bash
-node ./bench_cli/bench_cli.mjs dataset clone oneshot270-v1 oneshot270-local
-node ./bench_cli/bench_cli.mjs dataset add oneshot270-local \
+node ./bench_cli.mjs dataset clone oneshot270-v1 oneshot270-local
+node ./bench_cli.mjs dataset add oneshot270-local \
   --id extra-001 --split proxy --target /path/part.step \
   --ir /path/part.ir.jsonl --prompt-file /path/prompt.txt
-node ./bench_cli/bench_cli.mjs dataset revisions oneshot270-local
+node ./bench_cli.mjs dataset revisions oneshot270-local
 ```
 
-运行记录在 `bench_cli/.runtime/runs/<run-id>/`。Agent 自报分数不作为验收结果；独立 replay 和评分才决定 case 状态。rIoU、严格 B-rep IoU、运行失败、超时和缺少候选代码应分别看待。
+运行记录在 `.runtime/runs/<run-id>/`。Agent 自报分数不作为验收结果；独立 replay 和评分才决定 case 状态。rIoU、严格 B-rep IoU、运行失败、超时和缺少候选代码应分别看待。
 
 ## 多 solid assembly benchmark
 
-assembly 入口是 `bench_cli/assembly/bench_assembly`，不替代单件命令。`run` 收集已完成 assembly attempt 并保存输入快照，不执行候选代码；`score` 随后调用独立 assembly evaluator：
+assembly 入口是 `assembly/bench_assembly`，不替代单件命令。`run` 收集已完成 assembly attempt 并保存输入快照，不执行候选代码；`score` 随后调用独立 assembly evaluator：
 
 ```bash
-./bench_cli/assembly/bench_assembly inspect --project PROJECT_DIR
-./bench_cli/assembly/bench_assembly run --project PROJECT_DIR \
-  --out bench_cli/.runtime/assembly-runs
-./bench_cli/assembly/bench_assembly score --project PROJECT_DIR \
+./assembly/bench_assembly inspect --project PROJECT_DIR
+./assembly/bench_assembly run --project PROJECT_DIR \
+  --out .runtime/assembly-runs
+./assembly/bench_assembly score --project PROJECT_DIR \
   --attempt-dir PROJECT_DIR/assembly/attempt-001 \
-  --out bench_cli/.runtime/assembly-score
-./bench_cli/assembly/bench_assembly history list
-node --test bench_cli/assembly/test/*.test.mjs
+  --out .runtime/assembly-score
+./assembly/bench_assembly history list
+node --test assembly/test/*.test.mjs
 ```
 
 项目需要 `project.json`、`assembly.ir.json` 和实际生成的 attempt 输入/输出。评测会校验路径、STEPIR v6.3 版本、SHA256 和 symlink。`assembly-verdict-v1` 分开报告几何、occurrence 覆盖、约束状态和 placement fallback；Agent 完成消息本身不代表通过。
 
+装配优化无需改 benchmark 入口：`run` 仍委托 `cad-code-multi assemble`。新版控制器给 Agent 提供有界索引与分页，预先生成覆盖所有 occurrence 的 ground + fixed spanning tree，Agent 仅对少量有证据的候选改用运动副。完整 STEPIR/IR 仍由控制器和独立评测核对；单 solid 的命令、提示词和轨迹格式不变。
+
+新版 benchmark 的 run 快照会核对并复制 manifest 声明的 context index/pages，在 `source/input/` 下保留相应 hash；没有 context index 的旧 attempt 仍兼容。请同时归档原 assembly attempt 目录、完整交付代码树、报告与 raw session export；`score` 仍读取原 attempt，run 快照不是独立回放包，不能只保留它就删除原目录。详见 [独立仓库的装配说明](https://github.com/Yulia2233/bench_cli/blob/main/assembly/README.md#large-assembly-context-and-static-defaults)。
+
 ## 历史与清理
 
 ```bash
-node ./bench_cli/bench_cli.mjs history list
-node ./bench_cli/bench_cli.mjs history compare RUN_A RUN_B
-node ./bench_cli/bench_cli.mjs clean workspace --run RUN_ID
-node ./bench_cli/bench_cli.mjs clean traces --run RUN_ID --yes
-node --test bench_cli/test/*.test.mjs
+node ./bench_cli.mjs history list
+node ./bench_cli.mjs history compare RUN_A RUN_B
+node ./bench_cli.mjs clean workspace --run RUN_ID
+node ./bench_cli.mjs clean traces --run RUN_ID --yes
+node --test test/*.test.mjs
 ```
 
 清理操作会预览或要求确认。workspace 清理保留会话轨迹和分数；trace 清理移除选中轨迹记录但保留评分。删除前确认 run ID 与预览范围。单件和 assembly 的历史结果、SDK 版本及数据集 revision 应分开比较。

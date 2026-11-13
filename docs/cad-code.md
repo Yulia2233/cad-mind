@@ -62,6 +62,14 @@ export CAD_CODE_MULTISOLID_PART_PROMPT=/path/to/prompt_v63.md
 
 项目状态、选定的 child attempt、assembly attempt 和 `assembly-verdict-v1` 保存在项目目录中。对话完成不代表评估通过，应检查 `geometry_pass`、occurrence coverage 和 `mate_status`。
 
+### 大装配的上下文和默认约束
+
+装配优化版由控制器核对完整 assembly IR、child notebook 和 STEPIR v6.3 的 hash，但 Agent 首先只读 `input/assembly-context-index.json`，再按需读取 `input/assembly-index/` 中的分页。不会把上百份 STEPIR 一次放进初始提示词。索引会记录已提供和省略的候选关系数量；未检查的候选保留为待确认假设。
+
+控制器在开始装配对话前生成 `out/product.py`：每个 unique part 定义只复用一次，每个 occurrence 保留 STEP 中的位置；固定一个参考件，并用 fixed spanning tree 约束其余 occurrence。Agent 只对有限候选检查局部证据，有几何和功能依据才将某条 fixed 边换成运动副；不得留下无约束 occurrence。悬空或不确定的零件继续 fixed。这样的静态默认保证位置与覆盖完整，不代表已恢复原设计的机械运动。
+
+分析或归档时应保留原 attempt 的完整 `input/`、交付的 child-source 代码树、装配报告、独立 verdict 和原始会话导出。单件逆向继续使用原 prompt、skill、运行路径和轨迹 schema。
+
 ## 数据、导出和测试
 
 ```bash
