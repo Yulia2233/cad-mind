@@ -12,6 +12,7 @@
 | `stepir_geom/` | STEPIR 研究工作树；多 solid 预处理已同步到 `Yulia2233/step-tools` 的功能分支 |
 | `more_solid-data/` | 多实体开发验证 STEP 和 manifest；来源/用途依 manifest 记录 |
 | `work/analysis/` | 调研、评测报告和开发验证证据 |
+| `sites/v63-trajectory-labeler/` | 原批注站的数据目录与兼容源码；正式网页源码在 [data-review](https://github.com/Yulia2233/data-review)，操作见 [data-review 使用指南](data-review.md) |
 | `envs/` | 项目使用的本地 Python/工具环境配置 |
 
 先读项目根目录的 `README.md`、`PITFALLS.md`、`NEXT_PLAN.md`，再执行数据或训练相关任务。评测数据不能进入训练集；正式打包应使用仓库脚本进行 STEP hash 与来源核对。密钥只通过环境变量、stdin 或权限受限的 secrets 文件传递。
